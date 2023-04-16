@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Suicidal Message Prediction</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <h1>Suicidal Message Prediction</h1>
+    <form id="text-form">
+      <label for="text-input">Enter text:</label><br>
+      <textarea id="text-input" name="text" rows="4" cols="50"></textarea><br>
+      <input type="submit" value="Check">
+    </form>
+    <p id="prediction"></p>
+
+    <script>
+      const form = document.getElementById('text-form');
+      const prediction = document.getElementById('prediction');
+
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const text = formData.get('text');
+        const url = 'http://127.0.0.1:5000/predict';
+        const data = {text: text};
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+          const result = data.prediction ? 'The Text Contains References to self-harm' : 'Totally safe';
+          prediction.textContent = `Prediction: ${result}`;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      });
+    </script>
+  </body>
+</html>
